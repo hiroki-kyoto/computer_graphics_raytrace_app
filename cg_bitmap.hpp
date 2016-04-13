@@ -164,7 +164,7 @@ void draw_by_pixel_array (
 	for(int i=0; i<height; i++)
 	{
 		for(int j=0; j<width; j++)
-			fwrite((char*)(pos++)+1, sizeof(byte), 3, fp);
+			fwrite((char*)pos++, 3*sizeof(byte), 1, fp);
 		for(int j=0; j<edge_n; j++)
 			fwrite((char*)(&seg), sizeof(byte), 1, fp);
 	}
@@ -207,9 +207,7 @@ void save_data_as_bitmap(
 			fwrite((char*)&mat[height-1-i][j], sizeof(unsigned char), 1, fp);
 		}
 		for(int j=0;j<edge_n;j++)
-		{
 			fwrite((char*)&seg, sizeof(unsigned char), 1, fp);
-		}
 	}
 	
 	// close file 
