@@ -5,6 +5,7 @@
 #include "string.h"
 #include "cg_math.hpp"
 #include "cg_material.hpp"
+#include "cg_bitmap.hpp"
 
 namespace cg
 {
@@ -26,9 +27,22 @@ public:
 	{
 		m_Buffer = new Pixel[a_Width * a_Height];
 	}
-	Canvas( char* a_File )
+	Canvas( const char * a_File )
 	{
-		printf("Error: this interface is not implemented!");
+		int fnn = strlen(a_File);
+		bool legal = false;
+		if (a_File[fnn-4]=='.')
+			if(a_File[fnn-3]=='b')
+				if(a_File[fnn-2]=='m')
+					if(a_File[fnn-1]=='p')
+						legal = true;
+		if ( !legal )
+		{
+			printf("ERROR: BAD FILE NAME OR BAD FILE FORMAT! \n");
+			return;
+		}
+		GetImageInfo(a_File, m_Width, m_Height);
+		m_Buffer = new Pixel[m_Width * m_Height];
 	}
 	~Canvas()
 	{
@@ -49,7 +63,7 @@ public:
 		return m_Height; 
 	}
 
-	// Special operations
+	// DISPLAY TEXT INFORMATION ON HEAD BAR
 	void InitCharset()
 	{
 		SetChar( 0, ":ooo:", "o:::o", "ooooo", "o:::o", "o:::o" );
@@ -99,7 +113,7 @@ public:
 		SetChar(44, "::o::", ":::o:", ":::o:", ":::o:", "::o::" );
 		SetChar(45, ":::::", ":::::", ":::::", ":::::", ":::::" );
 		SetChar(46, "ooooo", "ooooo", "ooooo", "ooooo", "ooooo" );
-		SetChar(47, "::o::", "::o::", ":::::", ":::::", ":::::" ); // Tnx Ferry
+		SetChar(47, "::o::", "::o::", ":::::", ":::::", ":::::" );
 		SetChar(48, "o:o:o", ":ooo:", "ooooo", ":ooo:", "o:o:o" );
 		SetChar(49, "::::o", ":::o:", "::o::", ":o:::", "o::::" );
 		char c[] = "abcdefghijklmnopqrstuvwxyz0123456789!?:=,.-() #'*/";
@@ -115,7 +129,8 @@ public:
 		const char * c2, 
 		const char * c3, 
 		const char * c4, 
-		const char * c5 )
+		const char * c5 
+	)
 	{
 		strcpy( s_Font[c][0], c1 );
 		strcpy( s_Font[c][1], c2 );
@@ -124,10 +139,11 @@ public:
 		strcpy( s_Font[c][4], c5 );
 	}
 	void Print( 
-		char* a_String, 
+		const char * a_String, 
 		int x1, 
 		int y1, 
-		Pixel color )
+		Pixel color 
+	)
 	{
 		Pixel* t = m_Buffer + x1 + y1 * m_Width;
 		int i;

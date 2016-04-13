@@ -1,6 +1,6 @@
 // CG_BITMAP.H
-#ifndef BMP_H
-#define BMP_H
+#ifndef CG_BITMAP_H
+#define CG_BITMAP_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,6 +10,12 @@ typedef unsigned int pixel;
 typedef unsigned char byte;
 typedef unsigned short word;
 typedef unsigned int dword;
+
+enum COORD_TYPE
+{
+	LEFT_TOP = 0,
+	LEFT_BOTTOM = 1
+};
 
 // BMP HEADER
 typedef struct tagBITMAPFILEHEADER {
@@ -142,6 +148,7 @@ void read_header(FILE * fp, BMPHeader * hd)
 }
 
 void draw_by_pixel_array (
+	COORD_TYPE ct, // declare coord type
 	pixel *	data, // pixel array
 	int width, // width of image
 	int height, // height of image
@@ -160,21 +167,41 @@ void draw_by_pixel_array (
 	byte seg = 0x00;
 	int real_width = ((3*width-1)/4+1)*4;
 	int edge_n = real_width - 3*width;
-	pixel * pos = data;
-	for(int i=0; i<height; i++)
+	if ( ct == LEFT_TOP )
 	{
-		for(int j=0; j<width; j++)
-			fwrite((char*)pos++, 3*sizeof(byte), 1, fp);
-		for(int j=0; j<edge_n; j++)
-			fwrite((char*)(&seg), sizeof(byte), 1, fp);
+		for(int i=0; i<height; i++)
+		{
+			for(int j=0; j<width; j++)
+				fwrite( 
+					(char*)(data + ( ( height - 1 - i ) * width + j ) ), 
+					3*sizeof(byte), 1, fp );
+			for(int j=0; j<edge_n; j++)
+				fwrite((char*)(&seg), sizeof(byte), 1, fp);
+		}
 	}
+	else if ( ct == LEFT_BOTTOM )
+	{
+		for(int i=0; i<height; i++)
+		{
+			for(int j=0; j<width; j++)
+				fwrite( 
+					(char*)(data + ( i * width + j ) ), 
+					3*sizeof(byte), 1, fp 
+				);
+			for(int j=0; j<edge_n; j++)
+				fwrite((char*)(&seg), sizeof(byte), 1, fp);
+		}
+	}
+	else
+		printf("BAD COORD TYPE GIVEN!\n");
+
 	fclose(fp);
 }
 
 void save_data_as_bitmap(
 	unsigned char** mat, 
-	unsigned long width, 
-	unsigned long height, 
+	int width, 
+	int height, 
 	const char* file_name)
 {
 	if(!check_platform())
@@ -195,10 +222,10 @@ void save_data_as_bitmap(
 	unsigned char seg = 0x00;
 	
 	// be careful with the disk alignment
-	unsigned long real_width = ((3*width-1)/4+1)*4;
+	int real_width = ((3*width-1)/4+1)*4;
 	int edge_n = real_width - 3*width;
 	
-	for(unsigned long i=0;i<height;i++)
+	for(int i=0; i<height; i++)
 	{
 		for(unsigned long j=0;j<width;j++)
 		{
@@ -212,6 +239,18 @@ void save_data_as_bitmap(
 	
 	// close file 
 	fclose(fp);
+}
+
+bool GetImageInfo(const char * fn, int & width, int & height)
+{
+	if(!check_platform())
+		return false;
+	FILE * fp = fopen(fn, "r+b");
+	BMPHeader hd;
+	read_header(fp, &hd);
+	width = hd.biWidth;
+	height = hd.biHeight;
+	return true;
 }
 
 // read information from bitmap file

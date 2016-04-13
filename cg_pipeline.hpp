@@ -1,7 +1,6 @@
 #ifndef CG_PIPELINE_H
 #define CG_PIPELINE_H
 
-#include "time.h"
 #include "cg_model.hpp"
 #include "cg_ray.hpp"
 #include "cg_scene.hpp"
@@ -102,30 +101,41 @@ public:
 	}
 	void InitRender()
 	{
-		// set firts line to draw to
-		m_CurrLine = 20;
-		// set pixel buffer address of first pixel
-		m_PPos = 20 * m_Width;
 		// screen plane in world space coordinates
-		m_WX1 = -4, m_WX2 = 4, m_WY1 = m_SY = 3, m_WY2 = -3;
+		m_WX1 = -4, m_WX2 = 4, m_WY1 = 3, m_WY2 = -3;
 		// calculate deltas for interpolation
 		m_DX = (m_WX2 - m_WX1) / m_Width;
 		m_DY = (m_WY2 - m_WY1) / m_Height;
-		m_SY += 20 * m_DY;
+		
 		// allocate space to store pointers to primitives for previous line
+		delete m_LastRow;
 		m_LastRow = new Primitive*[m_Width];
 		memset( m_LastRow, 0, m_Width * 4 );
 	}
+	// MOVE CANVAS IN WORLD SPACE
+	void MoveCanvas(vector3 & v)
+	{
+		m_WX1 += v.x;
+		m_WX2 += v.x;
+		m_WY1 += v.y;
+		m_WY2 += v.y;
+	}
+	// RENDER THE SCENE ONTO THE CANVAS
 	bool Render()
 	{
+		// set firts line to draw to
+		m_CurrLine = 10;
+		// set pixel buffer address of first pixel
+		m_PPos = m_CurrLine * m_Width;
+		// set the current ray origin position
+		m_SY = m_WY1 + m_CurrLine * m_DY;
+
 		// render scene
 		vector3 o( 0, 0, -5 );
-		// initialize timer
-		size_t secs = time(NULL);
 		// reset last found primitive pointer
 		Primitive* lastprim = 0;
 		// render remaining lines
-		for ( int y = m_CurrLine; y < (m_Height - 20); y++ )
+		for ( int y = m_CurrLine; y < m_Height; y++ )
 		{
 			m_SX = m_WX1;
 			// render pixels for current line
@@ -133,7 +143,7 @@ public:
 			{
 				// fire primary ray
 				Color acc( 0, 0, 0 );
-				vector3 dir = vector3( m_SX, m_SY, 0 ) - o;
+				vector3 dir = vector3( m_SX, m_SY, m_SZ ) - o;
 				NORMALIZE( dir );
 				Ray r( o, dir );
 				float dist;
@@ -148,20 +158,16 @@ public:
 				m_SX += m_DX;
 			}
 			m_SY += m_DY;
-			// see if we've been working to long already
-			if ((time(NULL) - secs) > 1) 
-			{
-				// working too long, terminate this process
-				m_CurrLine = y + 1;
-				return false;
-			}
 		}
 		// all done
 		return true;
 	}
 protected:
 	// renderer data
-	float m_WX1, m_WY1, m_WX2, m_WY2, m_DX, m_DY, m_SX, m_SY;
+	float m_WX1, m_WY1, m_WZ1; // left bottom
+	float m_WX2, m_WY2, m_WZ2; // right top
+	float m_DX, m_DY, m_DZ;	// delta increment
+	float m_SX, m_SY, m_SZ; // ray current tracing position 
 	Scene* m_Scene;
 	Pixel* m_Dest;
 	int m_Width, m_Height, m_CurrLine, m_PPos;
