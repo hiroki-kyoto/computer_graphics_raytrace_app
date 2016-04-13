@@ -20,7 +20,7 @@ int main()
 	{
 		for ( int j=0; j<SCREEN_X; j++)
 		{
-			if ( i==100 || i==j || j==300 )
+			if ( 500*i-j*j>-500 && 500*i-j*j<500 )
 				data[i*SCREEN_X+j] = 0;
 			else
 				data[i*SCREEN_X+j] = 0xffffff;
