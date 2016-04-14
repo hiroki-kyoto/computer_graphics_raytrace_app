@@ -39,11 +39,11 @@ public:
 		m_Primitive[2]->GetMaterial()->SetDiffuse( 0.1f );
 		m_Primitive[2]->GetMaterial()->SetColor( Color( 0.7f, 0.7f, 1.0f ) );
 		// light source 1
-		m_Primitive[3] = new Sphere( vector3( 0, 5, 5 ), 0.1f );
+		m_Primitive[3] = new Sphere( vector3( 0, 5, 3 ), 0.1f );
 		m_Primitive[3]->Light( true );
 		m_Primitive[3]->GetMaterial()->SetColor( Color( 0.6f, 0.6f, 0.6f ) );
 		// light source 2
-		m_Primitive[4] = new Sphere( vector3( 2, 5, 1 ), 0.1f );
+		m_Primitive[4] = new Sphere( vector3( 0, 5, 1 ), 0.1f );
 		m_Primitive[4]->Light( true );
 		m_Primitive[4]->GetMaterial()->SetColor( Color( 0.7f, 0.7f, 0.9f ) );
 		// set number of primitives

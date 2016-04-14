@@ -112,14 +112,18 @@ public:
 		m_LastRow = new Primitive*[m_Width];
 		memset( m_LastRow, 0, m_Width * 4 );
 	}
-	// MOVE CANVAS IN WORLD SPACE
-	void MoveCanvas(vector3 & v)
+	// MOVE CANVAS AND EYE IN WORLD SPACE
+	void MoveCamera(vector3 & v)
 	{
 		m_WX1 += v.x;
 		m_WX2 += v.x;
 		m_WY1 += v.y;
 		m_WY2 += v.y;
+		m_WZ1 += v.z;
+		m_WZ2 += v.z;
+		// change 
 	}
+	// ROTATE CAMERA
 	// RENDER THE SCENE ONTO THE CANVAS
 	bool Render()
 	{
@@ -164,10 +168,11 @@ public:
 	}
 protected:
 	// renderer data
-	float m_WX1, m_WY1, m_WZ1; // left bottom
-	float m_WX2, m_WY2, m_WZ2; // right top
-	float m_DX, m_DY, m_DZ;	// delta increment
-	float m_SX, m_SY, m_SZ; // ray current tracing position 
+	Camera camera;				// camera in world
+	float m_WX1, m_WY1, m_WZ1; 
+	float m_WX2, m_WY2, m_WZ2;
+	float m_DX, m_DY, m_DZ;		// delta increment
+	float m_SX, m_SY, m_SZ;		// ray current tracing position 
 	Scene* m_Scene;
 	Pixel* m_Dest;
 	int m_Width, m_Height, m_CurrLine, m_PPos;
