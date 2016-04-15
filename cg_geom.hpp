@@ -43,7 +43,7 @@ public:
 	{ 
 		return x * x + y * y + z * z; 
 	}
-	float Dot( vector3 a_V ) 
+	float Dot( vector3 a_V ) const
 	{ 
 		return x * a_V.x + y * a_V.y + z * a_V.z; 
 	}

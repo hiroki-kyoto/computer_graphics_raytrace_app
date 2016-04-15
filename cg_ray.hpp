@@ -29,11 +29,11 @@ public:
 	{ 
 		m_Direction = a_Direction; 
 	}
-	const vector3 & GetOrigin() 
+	const vector3 & GetOrigin() const
 	{ 
 		return m_Origin; 
 	}
-	const vector3 & GetDirection() 
+	const vector3 & GetDirection() const
 	{ 
 		return m_Direction;
 	}

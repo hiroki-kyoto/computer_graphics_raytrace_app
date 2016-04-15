@@ -2,6 +2,7 @@
 #define CG_MODEL_H
 
 #include "string.h"
+#include "stdio.h"
 #include "cg_math.hpp"
 #include "cg_geom.hpp"
 #include "cg_material.hpp"
@@ -29,8 +30,8 @@ public:
 		m_Material = a_Mat; 
 	}
 	virtual int GetType() = 0;
-	virtual int Intersect( Ray& a_Ray, float& a_Dist ) = 0;
-	virtual vector3 GetNormal( vector3& a_Pos ) = 0;
+	virtual int Intersect( const Ray & a_Ray, float & a_Dist ) = 0;
+	virtual vector3 GetNormal( const vector3 & a_Pos ) = 0;
 	virtual Color GetColor( vector3& ) 
 	{ 
 		return m_Material.GetColor(); 
@@ -78,7 +79,7 @@ public:
 	{ 
 		return m_SqRadius; 
 	}
-	int Intersect( Ray& a_Ray, float& a_Dist )
+	int Intersect( const Ray & a_Ray, float & a_Dist )
 	{
 		vector3 v = a_Ray.GetOrigin() - m_Centre;
 		float b = -DOT( v, a_Ray.GetDirection() );
@@ -111,7 +112,7 @@ public:
 		}
 		return retval;
 	}
-	vector3 GetNormal( vector3& a_Pos ) 
+	vector3 GetNormal( const vector3& a_Pos ) 
 	{ 
 		return (a_Pos - m_Centre) * m_RRadius; 
 	}
@@ -194,7 +195,7 @@ public:
 	}
 	int Intersect()
 	{
-
+		return MISS;
 	}
 private:
 	vector3 m_Centre, m_Dim;
