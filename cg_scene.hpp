@@ -13,53 +13,78 @@ using namespace std;
 class Scene
 {
 public:
-	Scene() : m_Primitives( 0 ), m_Primitive( 0 ) {};
+	Scene() 
+	{
+		m_PrimCap = 100;
+		m_PrimCount = 0;
+		m_PrimList = new Primitive * [ m_PrimCap ];
+	};
 	~Scene()
 	{
-		delete m_Primitive;
+		delete m_PrimList;
 	}
 	void InitScene()
 	{
-		m_Primitive = new Primitive*[100];
-		// ground plane
-		m_Primitive[0] = new PlanePrim( vector3( 0, 1, 0 ), 4.4f );
-		m_Primitive[0]->SetName( "plane" );
-		m_Primitive[0]->GetMaterial()->SetReflection( 0 );
-		m_Primitive[0]->GetMaterial()->SetDiffuse( 1.0f );
-		m_Primitive[0]->GetMaterial()->SetColor( Color( 0.4f, 0.3f, 0.3f ) );
-		// big sphere
-		m_Primitive[1] = new Sphere( vector3( 1, -0.8f, 3 ), 2.5f );
-		m_Primitive[1]->SetName( "big sphere" );
-		m_Primitive[1]->GetMaterial()->SetReflection( 0.6f );
-		m_Primitive[1]->GetMaterial()->SetColor( Color( 0.7f, 0.7f, 0.7f ) );
-		// small sphere
-		m_Primitive[2] = new Sphere( vector3( -5.5f, -0.5, 7 ), 2 );
-		m_Primitive[2]->SetName( "small sphere" );
-		m_Primitive[2]->GetMaterial()->SetReflection( 1.0f );
-		m_Primitive[2]->GetMaterial()->SetDiffuse( 0.1f );
-		m_Primitive[2]->GetMaterial()->SetColor( Color( 0.7f, 0.7f, 1.0f ) );
 		// light source 1
-		m_Primitive[3] = new Sphere( vector3( 0, 5, 3 ), 0.1f );
-		m_Primitive[3]->Light( true );
-		m_Primitive[3]->GetMaterial()->SetColor( Color( 0.6f, 0.6f, 0.6f ) );
-		// light source 2
-		m_Primitive[4] = new Sphere( vector3( 0, 5, 1 ), 0.1f );
-		m_Primitive[4]->Light( true );
-		m_Primitive[4]->GetMaterial()->SetColor( Color( 0.7f, 0.7f, 0.9f ) );
-		// set number of primitives
-		m_Primitives = 5;
+		int pid = AddPrimitive( new Sphere( vector3( 0.0, 2.0, -1.0 ), 0.1 ) );
+		if ( pid < 0 )
+			return;
+		m_PrimList[pid]->Light( true );
+		m_PrimList[pid]->GetMaterial()->SetColor( Color( 0.8f, 0.8f, 0.8f ) );
+
+		// ground
+		pid = AddPrimitive( new PlanePrim( vector3( 0, 1, 0 ), -5 ) );
+		if ( pid < 0 )
+			return;
+		m_PrimList[pid]->SetName( "GROUND" );
+		m_PrimList[pid]->GetMaterial()->SetReflection( 0.0 );
+		m_PrimList[pid]->GetMaterial()->SetDiffuse( 0.5 );
+		m_PrimList[pid]->GetMaterial()->SetColor( Color( 1.0f, 0.0f, 0.0f ) );
+
+		// wall
+		pid = AddPrimitive( new PlanePrim( vector3( 0, 0, -1 ), -8 ) );
+		if ( pid < 0 )
+			return;
+		m_PrimList[pid]->SetName( "WALL" );
+		m_PrimList[pid]->GetMaterial()->SetReflection( 0.0 );
+		m_PrimList[pid]->GetMaterial()->SetDiffuse( 0.5 );
+		m_PrimList[pid]->GetMaterial()->SetColor( Color( 0.0f, 0.0f, 1.0f ) );
+
+
+		// sphere 001
+		pid = AddPrimitive( new Sphere( vector3( 0.0f, 0.0f, 3.0f ), 1.0f ) );
+		if( pid < 0 )
+			return;
+		m_PrimList[pid]->SetName( "GREEN BALL" );
+		m_PrimList[pid]->Light( false );
+		m_PrimList[pid]->GetMaterial()->SetReflection( 0.5 );
+		m_PrimList[pid]->GetMaterial()->SetDiffuse( 0.8 );
+		m_PrimList[pid]->GetMaterial()->SetColor( Color( 0.0f, 1.0f, 0.0f ) );
+
 	}
-	int GetNrPrimitives() 
-	{ 
-		return m_Primitives; 
+	int GetPrimCount()
+	{
+		return m_PrimCount; 
 	}
-	Primitive * GetPrimitive( int a_Idx ) 
-	{ 
-		return m_Primitive[a_Idx]; 
+	Primitive * GetPrimitive( int a_Idx )
+	{
+		return m_PrimList[a_Idx]; 
+	}
+	int AddPrimitive( Primitive * prim )
+	{
+		if ( m_PrimCount == m_PrimCap )
+		{
+			printf( "Error: object count exceeding capcity of scene! \n" );
+			return -1;
+		}
+		m_PrimList[m_PrimCount] = prim;
+		m_PrimCount ++;
+		return m_PrimCount - 1;
 	}
 private:
-	int m_Primitives;
-	Primitive ** m_Primitive;
+	int m_PrimCount;			// count of primitives
+	int m_PrimCap;				// capcity of primitives
+	Primitive ** m_PrimList;	// primitive list
 };
 
 };

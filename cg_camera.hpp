@@ -11,12 +11,12 @@ class Camera
 {
 public:
 	Camera (
-		const vector3 & i_A, 
-		const vector3 & i_N, 
+		const vector3 & i_C=vector3(0,0,0), 
+		const vector3 & i_N=vector3(0,0,1), 
 		float i_L=5,
 		float i_W=8,
-		float i_H=6,
-		float i_T=0) : A(i_A), N(i_N), L(i_L), W(i_W), H(i_H), T(i_T)
+		float i_H=6
+		) : C(i_C), N(i_N), L(i_L), W(i_W), H(i_H)
 	{
 		if ( L <= 0 || W <= 0 || H <= 0 )
 		{
@@ -57,9 +57,7 @@ public:
 		N.Normalize();
 		X.Normalize();
 		Y.Normalize();
-		C = A + L * N;
-		X = cos( theta ) * X + sin( theta ) * Y;
-		Y = -sin( theta ) * X + cos( theta ) * Y;
+		A = C - L * N;
 		B = C - 0.5 * W * X - 0.5 * H * Y;
 	}
 	// method to operate this camera
@@ -72,15 +70,17 @@ public:
 	}
 	void Rotate( float theta )
 	{
-		T += theta;
 		// update basis of canvas
-		X = cos ( theta ) * X + sin ( theta ) * Y;
-		Y = -sin( theta ) * X + cos ( theta ) * Y;
+		vector3 oldX, oldY;
+		oldX = X;
+		oldY = Y;
+		X = cos ( theta ) * oldX + sin ( theta ) * oldY;
+		Y = -sin( theta ) * oldX + cos ( theta ) * oldY;
 		B = C - 0.5 * W * X - 0.5 * H * Y;
 	}
 	void LookAt( const vector3 & target )
 	{
-		N = target - A;
+		N = target - C;
 		Update ();
 	}
 	void Pull( float d )
@@ -119,24 +119,28 @@ public:
 			return;
 		}
 		// update Norm of canvas
+		vector3 center;
+		center = C + radius * N;
 		N = cos( beita ) *
-			( cos( alpha ) * N - sin( alpha ) * X ) - 
+			( cos( alpha ) * N - sin( alpha ) * X ) + 
 			sin( beita ) * Y;
-		A = ( 0 - radius - L ) * N;
+		C = center - radius * N;
 		Update();
 	}
 	// Look around standing current place
 	void LookAround( float alpha, float beita )
 	{
-		
+		N = cos( beita ) * 
+			( cos( alpha ) * N - sin( alpha ) * X ) +
+			sin( beita ) * Y;
+		Update();
 	}
-private:
+
 	vector3 A;	// origin 
 	vector3 N;	// norm of plane 
 	float	L;	// length of camera
 	float	W;	// width of canvas
 	float	H;	// height of canvas
-	float	T;	// rotate angle
 	vector3 C;	// center of canvas
 	vector3 X;	// x axis on plane
 	vector3 Y;	// y axis on plane

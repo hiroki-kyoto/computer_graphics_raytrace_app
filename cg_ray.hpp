@@ -15,27 +15,27 @@ public:
 	{
 		// do nothing
 	};
-	Ray( vector3& a_Origin, vector3& a_Dir ) : 
+	Ray( const vector3& a_Origin, const vector3& a_Dir ) : 
 		m_Origin( a_Origin ), 
 		m_Direction( a_Dir )
 	{
 		// do nothing
 	}
-	void SetOrigin( vector3& a_Origin ) 
+	void SetOrigin( const vector3 & a_Origin ) 
 	{ 
 		m_Origin = a_Origin; 
 	}
-	void SetDirection( vector3& a_Direction ) 
+	void SetDirection( const vector3 & a_Direction ) 
 	{ 
 		m_Direction = a_Direction; 
 	}
-	vector3& GetOrigin() 
+	const vector3 & GetOrigin() 
 	{ 
 		return m_Origin; 
 	}
-	vector3& GetDirection() 
+	const vector3 & GetDirection() 
 	{ 
-		return m_Direction; 
+		return m_Direction;
 	}
 private:
 	vector3 m_Origin;

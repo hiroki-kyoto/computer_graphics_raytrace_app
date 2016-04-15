@@ -16,7 +16,8 @@ public:
 	enum
 	{
 		SPHERE = 1,
-		PLANE
+		PLANE = 2,
+		BOX = 3
 	};
 	Primitive() : m_Name( 0 ), m_Light( false ) {};
 	Material* GetMaterial() 
@@ -62,7 +63,7 @@ protected:
 class Sphere : public Primitive
 {
 public:
-	int GetType() 
+	int GetType()
 	{ 
 		return SPHERE; 
 	}
@@ -71,7 +72,7 @@ public:
 		m_Radius( a_Radius ), m_RRadius( 1.0f / a_Radius ) {};
 	vector3& GetCentre() 
 	{ 
-		return m_Centre; 
+		return m_Centre;
 	}
 	float GetSqRadius() 
 	{ 
@@ -127,12 +128,12 @@ public:
 	{ 
 		return PLANE; 
 	}
-	PlanePrim( vector3 a_Normal, float a_D ) 
+	PlanePrim( const vector3 & a_Normal, float a_D ) 
 	{
 		m_Plane.N = a_Normal;
 		m_Plane.D = a_D;
 	}
-	vector3& GetNormal() 
+	const vector3 & GetNormal() 
 	{ 
 		return m_Plane.N;
 	}
@@ -140,29 +141,63 @@ public:
 	{ 
 		return m_Plane.D; 
 	}
-	int Intersect( Ray& a_Ray, float& a_Dist )
+	int Intersect( const Ray & a_Ray, float & a_Dist )
 	{
 		float d = DOT( m_Plane.N, a_Ray.GetDirection() );
 		if (d != 0)
 		{
-			float dist = -(DOT( m_Plane.N, a_Ray.GetOrigin() ) + m_Plane.D) / d;
-			if (dist > 0)
+			float t = ( m_Plane.D - a_Ray.GetOrigin().Dot( m_Plane.N ) ) / d;
+			if ( t > 0 )
 			{
-				if (dist < a_Dist) 
+				if ( t < a_Dist ) 
 				{
-					a_Dist = dist;
+					a_Dist = t;
 					return HIT;
 				}
 			}
 		}
 		return MISS;
 	}
-	vector3 GetNormal( vector3& a_Pos )
+	vector3 GetNormal( const vector3 & a_Pos )
 	{
 		return m_Plane.N;
 	}
 private:
 	plane m_Plane;
+};
+
+// box model
+class Box : public Primitive
+{
+public:
+	int GetType()
+	{
+		return BOX;
+	}
+	Box( const vector3 & centre, const vector3 & dim )
+	{
+		if( dim.x <= 0 || dim.y <= 0 || dim.z <= 0)
+		{
+			printf("Error: Dimension of Box should be positive!\n");
+			return;
+		}
+		m_Centre = centre;
+		m_Dim = dim;
+	}
+	const vector3 &  GetCentre()
+	{
+		return m_Centre;
+	}
+	const vector3 & GetDim()
+	{
+		return m_Dim;
+	}
+	int Intersect()
+	{
+
+	}
+private:
+	vector3 m_Centre, m_Dim;
 };
 
 

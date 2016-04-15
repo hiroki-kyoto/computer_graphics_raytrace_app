@@ -49,8 +49,16 @@ int main()
 	// draw image sequence
 	stringstream str_hub;
 	int seq_len = 10;
-	ppl.InitRender();
-	vector3 speed ( 0.0, 0.0, 0.2 );
+
+	// after we rotate the camera
+	ppl.GetCamera()->Rotate( -0.251 * PI );
+	
+	if( ppl.GetCamera()->X.Dot( ppl.GetCamera()->Y ) == 0 )
+		cout << "OK ! X ERECTED TO Y!" << endl;
+	if( ppl.GetCamera()->X.Dot( ppl.GetCamera()->N ) == 0 )
+		cout << "OK ! X ERECTED TO N!" << endl;
+	if( ppl.GetCamera()->Y.Dot( ppl.GetCamera()->N ) == 0 )
+		cout << "OK ! Y ERECTED TO N!" << endl;
 
 	for ( int i=0; i<seq_len; i++)
 	{
@@ -59,10 +67,9 @@ int main()
 		cvs.InitCharset();
 		cvs.Print(str_hub.str().c_str(), 0, 0, 0xffffff);
 		ppl.Render();
-		ppl.MoveCanvas( speed );
 		str_hub << ".bmp";
 		draw_by_pixel_array( 
-			LEFT_TOP, 
+			LEFT_BOTTOM, 
 			buf, 
 			SCREEN_X, 
 			SCREEN_Y, 
@@ -70,6 +77,7 @@ int main()
 		);
 		cout << str_hub.str().c_str() << endl;
 		str_hub.str("");
+		ppl.GetCamera()->LookAround( 0.02 * PI , 0.0 );
 	}
 	
 	return 0;
