@@ -33,7 +33,7 @@ public:
 		m_PrimList[pid]->GetMaterial()->SetColor( Color( 0.8f, 0.8f, 0.8f ) );
 
 		// ground
-		pid = AddPrimitive( new PlanePrim( vector3( 0, 1, 0 ), -5 ) );
+		pid = AddPrimitive( new PlanePrim( vector3( 0, 1, 0 ), -5.0 ) );
 		if ( pid < 0 )
 			return;
 		m_PrimList[pid]->SetName( "GROUND" );
@@ -41,14 +41,32 @@ public:
 		m_PrimList[pid]->GetMaterial()->SetDiffuse( 0.5 );
 		m_PrimList[pid]->GetMaterial()->SetColor( Color( 1.0f, 0.0f, 0.0f ) );
 
-		// wall
-		pid = AddPrimitive( new PlanePrim( vector3( 0, 0, -1 ), -8 ) );
+		// font wall
+		pid = AddPrimitive( new PlanePrim( vector3( 0, 0, -1 ), -8.0 ) );
 		if ( pid < 0 )
 			return;
-		m_PrimList[pid]->SetName( "WALL" );
+		m_PrimList[pid]->SetName( "FONT WALL" );
 		m_PrimList[pid]->GetMaterial()->SetReflection( 0.0 );
 		m_PrimList[pid]->GetMaterial()->SetDiffuse( 0.5 );
 		m_PrimList[pid]->GetMaterial()->SetColor( Color( 0.0f, 0.0f, 1.0f ) );
+
+		// left wall
+		pid = AddPrimitive( new PlanePrim( vector3( 1, 0, 0 ), -8.0 ) );
+		if ( pid < 0 )
+			return;
+		m_PrimList[pid]->SetName( "LEFT WALL" );
+		m_PrimList[pid]->GetMaterial()->SetReflection( 0.0 );
+		m_PrimList[pid]->GetMaterial()->SetDiffuse( 0.5 );
+		m_PrimList[pid]->GetMaterial()->SetColor( Color( 0.0f, 1.0f, 1.0f ) );
+
+		// right wall
+		pid = AddPrimitive( new PlanePrim( vector3( -1, 0, 0 ), 8.0 ) );
+		if ( pid < 0 )
+			return;
+		m_PrimList[pid]->SetName( "RIGHT WALL" );
+		m_PrimList[pid]->GetMaterial()->SetReflection( 0.0 );
+		m_PrimList[pid]->GetMaterial()->SetDiffuse( 0.5 );
+		m_PrimList[pid]->GetMaterial()->SetColor( Color( 1.0f, 0.0f, 1.0f ) );
 
 
 		// sphere 001

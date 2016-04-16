@@ -52,22 +52,11 @@ int main()
 
 	// after we rotate the camera
 	ppl.GetCamera()->Rotate( -0.251 * PI );
-	
-	if( ppl.GetCamera()->X.Dot( ppl.GetCamera()->Y ) == 0 )
-		cout << "OK ! X ERECTED TO Y!" << endl;
-	if( ppl.GetCamera()->X.Dot( ppl.GetCamera()->N ) == 0 )
-		cout << "OK ! X ERECTED TO N!" << endl;
-	if( ppl.GetCamera()->Y.Dot( ppl.GetCamera()->N ) == 0 )
-		cout << "OK ! Y ERECTED TO N!" << endl;
 
 	for ( int i=0; i<seq_len; i++)
 	{
-		str_hub << "seq_" << i;
-		cvs.Clear(0);
-		cvs.InitCharset();
-		cvs.Print(str_hub.str().c_str(), 0, 0, 0xffffff);
+		str_hub << "seq_" << i << ".bmp";
 		ppl.Render();
-		str_hub << ".bmp";
 		draw_by_pixel_array( 
 			LEFT_BOTTOM, 
 			buf, 
