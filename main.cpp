@@ -50,9 +50,6 @@ int main()
 	stringstream str_hub;
 	int seq_len = 10;
 
-	// after we rotate the camera
-	ppl.GetCamera()->Rotate( -0.251 * PI );
-
 	for ( int i=0; i<seq_len; i++)
 	{
 		str_hub << "seq_" << i << ".bmp";
